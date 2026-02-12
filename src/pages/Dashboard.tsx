@@ -9,6 +9,7 @@ import CalendarGrid from "@/components/CalendarGrid";
 import DayModal from "@/components/DayModal";
 import StreakDisplay from "@/components/StreakDisplay";
 import InspirationQuote from "@/components/InspirationQuote";
+import SuccessJar from "@/components/SuccessJar";
 import VideoList from "@/components/VideoList";
 import {
   format,
@@ -114,8 +115,9 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
           {/* Left Sidebar */}
           <div className="order-3 lg:order-1 lg:col-span-3 space-y-6">
+            <SuccessJar />
             <InspirationQuote />
-            
+
             {/* Quick Stats */}
             <div className="bg-card rounded-lg border p-4">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
@@ -141,7 +143,7 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Today's Focus */}
             <div className="bg-card rounded-lg border p-4">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
@@ -183,7 +185,7 @@ const Dashboard = () => {
           {/* Right Sidebar */}
           <div className="order-2 lg:order-3 lg:col-span-3 space-y-6">
             <VideoList />
-            
+
             {/* Recent Activity */}
             <div className="bg-card rounded-lg border p-4">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
@@ -213,7 +215,7 @@ const Dashboard = () => {
                 )}
               </div>
             </div>
-            
+
             {/* Motivation Corner */}
             <div className="bg-card rounded-lg border p-4">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
