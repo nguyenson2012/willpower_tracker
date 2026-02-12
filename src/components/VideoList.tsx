@@ -10,13 +10,13 @@ const VideoList = () => {
   const { videos, loading } = useMotivationVideos();
   const navigate = useNavigate();
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-  
+
   const DISPLAY_COUNT = 3;
 
   // Get 3 random videos, memoized to prevent reshuffling on re-renders
   const randomVideos = useMemo(() => {
     if (videos.length <= DISPLAY_COUNT) return videos;
-    
+
     // Create a copy and shuffle
     const shuffled = [...videos];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -34,7 +34,7 @@ const VideoList = () => {
 
   if (loading) {
     return (
-      <Card className="mt-6">
+      <Card className="flex flex-col h-[350px] border-border/50 bg-card/80 backdrop-blur-sm shadow-lg overflow-hidden">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <span className="text-lg">🎬</span>
@@ -58,24 +58,21 @@ const VideoList = () => {
 
   return (
     <>
-      <Card className="mt-6">
+      <Card className="flex flex-col h-[350px] border-border/50 bg-card/80 backdrop-blur-sm shadow-lg overflow-hidden">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <span className="text-lg">🎬</span>
-              Videos
+              Motivation
             </CardTitle>
             <div className="flex items-center gap-2">
               {videos.length > DISPLAY_COUNT && (
-                <Button
-                  variant="outline"
-                  size="sm"
+                <button
                   onClick={() => navigate('/videos')}
-                  className="text-xs"
+                  className="text-xs text-muted-foreground hover:text-primary transition-colors hover:underline"
                 >
-                  <Grid3X3 className="h-3 w-3 mr-1" />
-                  View All ({videos.length})
-                </Button>
+                  View All
+                </button>
               )}
             </div>
           </div>
@@ -132,12 +129,12 @@ const VideoList = () => {
               );
             })}
           </div>
-          
+
           {/* Discovery hint */}
           {videos.length > DISPLAY_COUNT && (
             <div className="text-center mt-3">
               <p className="text-xs text-muted-foreground">
-                Showing 3 random videos • <button 
+                Showing 3 random videos • <button
                   onClick={() => navigate('/videos')}
                   className="text-primary hover:underline"
                 >
@@ -146,7 +143,7 @@ const VideoList = () => {
               </p>
             </div>
           )}
-          
+
           {/* Simple count for few videos */}
           {videos.length <= DISPLAY_COUNT && videos.length > 1 && (
             <p className="text-xs text-muted-foreground text-center mt-3">

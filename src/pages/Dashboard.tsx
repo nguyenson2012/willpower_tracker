@@ -112,11 +112,10 @@ const Dashboard = () => {
       <main className="container mx-auto px-4 py-4 max-w-7xl">
         <StreakDisplay currentStreak={currentStreak} longestStreak={longestStreak} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6 items-start">
           {/* Left Sidebar */}
           <div className="order-3 lg:order-1 lg:col-span-3 space-y-6">
             <SuccessJar />
-            <InspirationQuote />
 
             {/* Quick Stats */}
             <div className="bg-card rounded-lg border p-4">
@@ -180,6 +179,10 @@ const Dashboard = () => {
               onDayClick={setSelectedDate}
               loading={loading}
             />
+
+            <div className="mt-6">
+              <InspirationQuote />
+            </div>
           </div>
 
           {/* Right Sidebar */}
@@ -233,16 +236,18 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {selectedDate && (
-          <DayModal
-            date={selectedDate}
-            entry={entries.find((e) => e.entry_date === format(selectedDate, "yyyy-MM-dd"))}
-            onClose={() => setSelectedDate(null)}
-            onSave={upsertEntry}
-          />
-        )}
-      </main>
-    </div>
+        {
+          selectedDate && (
+            <DayModal
+              date={selectedDate}
+              entry={entries.find((e) => e.entry_date === format(selectedDate, "yyyy-MM-dd"))}
+              onClose={() => setSelectedDate(null)}
+              onSave={upsertEntry}
+            />
+          )
+        }
+      </main >
+    </div >
   );
 };
 
