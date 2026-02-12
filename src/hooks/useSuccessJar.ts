@@ -52,7 +52,7 @@ export const useSuccessJar = () => {
             return null;
         } else {
             setItems((prev) => [data, ...prev]);
-            toast.success("Added to your cooking jar! 🍯");
+            toast.success("Added to your cookie jar! 🍯");
             return data;
         }
     };

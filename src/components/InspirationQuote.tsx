@@ -20,7 +20,7 @@ const InspirationQuote = () => {
   const quote = useMemo(() => QUOTES[Math.floor(Math.random() * QUOTES.length)], []);
 
   return (
-    <Card className="p-4 border-border/50 bg-card text-center mt-6">
+    <Card className="p-4 border-border/50 bg-card text-center">
       <p className="text-base italic text-foreground leading-relaxed">"{quote.text}"</p>
       <p className="text-xs text-muted-foreground mt-2">— {quote.author}</p>
     </Card>

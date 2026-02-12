@@ -10,7 +10,7 @@ import {
   isBefore,
   startOfDay,
 } from "date-fns";
-import { Star } from "lucide-react";
+import { Flame } from "lucide-react";
 import { DailyEntry } from "@/hooks/useEntries";
 import { cn } from "@/lib/utils";
 
@@ -71,7 +71,7 @@ const CalendarGrid = ({ currentMonth, entries, onDayClick, loading }: CalendarGr
             >
               <span>{format(day, "d")}</span>
               {completed && (
-                <Star className="w-2.5 h-2.5 fill-current animate-in zoom-in duration-300" />
+                <Flame className="w-2.5 h-2.5 fill-current text-orange-400 animate-in zoom-in duration-300" />
               )}
             </button>
           );
