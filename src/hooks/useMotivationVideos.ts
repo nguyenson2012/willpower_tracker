@@ -6,6 +6,49 @@ import { toast } from "sonner";
 
 export type MotivationVideo = Tables<'motivation_videos'>;
 
+// Helper function to normalize YouTube URLs for duplicate checking
+const normalizeYouTubeUrl = (url: string): string => {
+  // Extract video ID from various YouTube URL formats
+  const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+  const match = url.match(regex);
+  return match ? match[1] : url; // Return video ID or original URL if no match
+};
+
+// Check for duplicate videos by URL
+const checkForDuplicate = async (videoUrl: string, excludeId?: string): Promise<boolean> => {
+  try {
+    const normalizedUrl = normalizeYouTubeUrl(videoUrl);
+    console.log('Checking for duplicate of video URL:', videoUrl, 'Normalized as:', normalizedUrl);
+    
+    let query = supabase
+      .from('motivation_videos')
+      .select('id, video_url')
+      .eq('is_active', true);
+
+    // Only add the neq condition if excludeId is provided and not empty
+    if (excludeId && excludeId.trim() !== '') {
+      query = query.neq('id', excludeId);
+    }
+
+    const { data, error } = await query;
+    console.log('Existing videos fetched for duplicate check:', data);
+
+    if (error) {
+      console.error('Error checking for duplicates:', error);
+      return false;
+    }
+
+    // Check if any existing video has the same video ID
+    return data?.some(video => {
+      const existingNormalizedUrl = normalizeYouTubeUrl(video.video_url);
+      return existingNormalizedUrl === normalizedUrl;
+    }) || false;
+  } catch (error) {
+    console.error('Error in checkForDuplicate:', error);
+    return false;
+  }
+};
+
 export const useMotivationVideos = () => {
   const { user } = useAuth();
   const [videos, setVideos] = useState<MotivationVideo[]>([]);
@@ -40,6 +83,13 @@ export const useMotivationVideos = () => {
     if (!user) return;
 
     try {
+      // Check for duplicates before adding
+      const isDuplicate = await checkForDuplicate(videoData.video_url);
+      if (isDuplicate) {
+        toast.error('This video already exists in the motivation videos list');
+        return null;
+      }
+
       const { data, error } = await supabase
         .from('motivation_videos')
         .insert({
@@ -67,6 +117,15 @@ export const useMotivationVideos = () => {
 
   const updateVideo = async (id: string, updates: Partial<MotivationVideo>) => {
     try {
+      // Check for duplicates if video URL is being updated
+      if (updates.video_url) {
+        const isDuplicate = await checkForDuplicate(updates.video_url, id);
+        if (isDuplicate) {
+          toast.error('This video already exists in the motivation videos list');
+          return null;
+        }
+      }
+
       const { data, error } = await supabase
         .from('motivation_videos')
         .update(updates)
@@ -119,6 +178,7 @@ export const useMotivationVideos = () => {
     addVideo,
     updateVideo,
     deleteVideo,
-    refetch: fetchVideos
+    refetch: fetchVideos,
+    checkForDuplicate
   };
 };

@@ -17,6 +17,28 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
 
+    // Get the correct redirect URL - use env var first, then dynamic detection
+    const getRedirectUrl = () => {
+      // Use environment variable if available
+      if (import.meta.env.VITE_APP_URL) {
+        return import.meta.env.VITE_APP_URL;
+      }
+      
+      // Use environment variable if available
+      if (import.meta.env.VITE_APP_URL) {
+        return import.meta.env.VITE_APP_URL;
+      }
+      
+      if (typeof window !== 'undefined') {
+        // In production, use the current origin
+        if (window.location.hostname !== 'localhost') {
+          return typeof window !== 'undefined' ? (window as Window).location.origin : '';
+        }
+        // In development, ensure we use the correct port (8080)
+        return `${window.location.protocol}//${window.location.hostname}:8080`;
+      }
+    };
+
     if (isLogin) {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
@@ -26,7 +48,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: window.location.origin },
+        options: { emailRedirectTo: getRedirectUrl() },
       });
       if (error) {
         toast.error(error.message);
@@ -39,10 +61,23 @@ const Auth = () => {
 
   const handleGoogleLogin = async () => {
     setLoading(true);
+    
+    // Get the correct redirect URL - use current origin or fallback to localhost:8080 in dev
+    const getRedirectUrl = () => {
+      if (typeof window !== 'undefined') {
+        // In production, use the current origin
+        if (window.location.hostname !== 'localhost') {
+          return window.location.origin;
+        }
+        // In development, ensure we use the correct port (8080)
+        return `${window.location.protocol}//${window.location.hostname}:8080`;
+      }
+    };
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: window.location.origin,
+        redirectTo: getRedirectUrl(),
       },
     });
 

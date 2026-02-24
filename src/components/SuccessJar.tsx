@@ -9,7 +9,7 @@ import {
     History,
     Trash2,
     X,
-    MessageSquareQuote
+    MessageSquareQuote,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -45,10 +45,12 @@ const SuccessJar = () => {
         <Card className="flex flex-col h-[350px] border-border/50 bg-card/80 backdrop-blur-sm shadow-lg overflow-hidden">
             <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                    <CardTitle className="font-bold flex items-center gap-2 text-primary text-base">
-                        <span className="text-xl">🍯</span>
-                        Cookie Jar
-                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                        <CardTitle className="font-bold flex items-center gap-2 text-primary text-base">
+                            <span className="text-xl">🍯</span>
+                            Cookie Jar
+                        </CardTitle>
+                    </div>
                     <div className="flex gap-2">
                         <Dialog open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
                             <DialogTrigger asChild>

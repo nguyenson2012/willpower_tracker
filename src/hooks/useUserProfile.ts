@@ -19,6 +19,7 @@ export const useUserProfile = () => {
 
     const fetchProfile = async () => {
       try {
+        console.log('Fetching profile for user:', user.id);
         const { data, error } = await supabase
           .from('user_profiles')
           .select('*')
@@ -28,9 +29,11 @@ export const useUserProfile = () => {
         if (error && error.code !== 'PGRST116') {
           console.error('Error fetching profile:', error);
         } else if (data) {
+          console.log('Profile found:', data);
           setProfile(data);
         } else {
           // Create profile if it doesn't exist
+          console.log('Creating new profile for user');
           const { data: newProfile, error: createError } = await supabase
             .from('user_profiles')
             .insert({ id: user.id, role: 'user' })
@@ -40,6 +43,7 @@ export const useUserProfile = () => {
           if (createError) {
             console.error('Error creating profile:', createError);
           } else {
+            console.log('New profile created:', newProfile);
             setProfile(newProfile);
           }
         }
