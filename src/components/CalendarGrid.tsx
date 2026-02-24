@@ -36,7 +36,7 @@ const CalendarGrid = ({ currentMonth, entries, onDayClick, loading }: CalendarGr
 
   return (
     <div>
-      <div className="grid grid-cols-7 gap-1 mb-2">
+      <div className="grid grid-cols-7 gap-2 mb-2">
         {WEEKDAYS.map((d) => (
           <div
             key={d}
@@ -46,24 +46,27 @@ const CalendarGrid = ({ currentMonth, entries, onDayClick, loading }: CalendarGr
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-2">
         {days.map((day) => {
           const dateStr = format(day, "yyyy-MM-dd");
           const inMonth = isSameMonth(day, currentMonth);
           const today = isToday(day);
           const completed = completedSet.has(dateStr);
           const isPast = isBefore(startOfDay(day), startOfDay(new Date()));
+          const isFuture = !isPast && !today;
           const missed = inMonth && isPast && !completed && !today;
+          const canClick = inMonth && today;
 
           return (
             <button
               key={dateStr}
-              onClick={() => inMonth && onDayClick(day)}
-              disabled={!inMonth}
+              onClick={() => canClick && onDayClick(day)}
+              disabled={!canClick}
               className={cn(
-                "h-10 sm:h-12 w-full rounded-lg flex flex-col items-center justify-center text-sm font-medium transition-all duration-200 relative",
+                "h-8 sm:h-10 w-full rounded-lg flex flex-col items-center justify-center text-sm font-medium transition-all duration-200 relative",
                 !inMonth && "text-muted-foreground/30 cursor-default",
-                inMonth && "hover:bg-accent cursor-pointer",
+                inMonth && !canClick && "cursor-not-allowed opacity-60",
+                canClick && "hover:bg-accent cursor-pointer",
                 today && !completed && "ring-2 ring-primary ring-offset-2 ring-offset-background",
                 completed && "bg-completed text-completed-foreground hover:bg-completed/90 shadow-sm",
                 missed && "bg-missed/15 text-missed",

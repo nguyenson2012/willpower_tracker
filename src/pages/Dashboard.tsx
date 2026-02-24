@@ -118,7 +118,7 @@ const Dashboard = () => {
             <SuccessJar />
 
             {/* Quick Stats */}
-            <div className="bg-card rounded-lg border p-4">
+            <div className="hidden md:block bg-card rounded-lg border p-4 h-[150px]">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
                 <span className="text-lg">📊</span>
                 Quick Stats
@@ -144,7 +144,7 @@ const Dashboard = () => {
             </div>
 
             {/* Today's Focus */}
-            <div className="bg-card rounded-lg border p-4">
+            <div className="hidden md:block bg-card rounded-lg border p-4">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
                 <span className="text-lg">🎯</span>
                 Today's Focus
@@ -190,7 +190,7 @@ const Dashboard = () => {
             <VideoList />
 
             {/* Recent Activity */}
-            <div className="bg-card rounded-lg border p-4">
+            <div className="hidden md:block bg-card rounded-lg border p-4 h-[150px]">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
                 <span className="text-lg">⚡</span>
                 Recent Activity
@@ -199,7 +199,7 @@ const Dashboard = () => {
                 {allEntries
                   .filter(e => e.completed)
                   .sort((a, b) => new Date(b.entry_date).getTime() - new Date(a.entry_date).getTime())
-                  .slice(0, 5)
+                  .slice(0, 2)
                   .map((entry) => (
                     <div key={entry.id} className="flex items-center gap-2 text-sm">
                       <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></div>
@@ -220,7 +220,7 @@ const Dashboard = () => {
             </div>
 
             {/* Motivation Corner */}
-            <div className="bg-card rounded-lg border p-4">
+            <div className="hidden md:block bg-card rounded-lg border p-4">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
                 <span className="text-lg">💪</span>
                 Keep Going!
@@ -241,6 +241,7 @@ const Dashboard = () => {
             <DayModal
               date={selectedDate}
               entry={entries.find((e) => e.entry_date === format(selectedDate, "yyyy-MM-dd"))}
+              allEntries={allEntries}
               onClose={() => setSelectedDate(null)}
               onSave={upsertEntry}
             />

@@ -17,13 +17,26 @@ import { toast } from "sonner";
 interface DayModalProps {
   date: Date;
   entry?: DailyEntry;
+  allEntries: DailyEntry[];
   onClose: () => void;
   onSave: (date: string, completed: boolean, notes: string) => Promise<void>;
 }
 
-const DayModal = ({ date, entry, onClose, onSave }: DayModalProps) => {
+const DayModal = ({ date, entry, allEntries, onClose, onSave }: DayModalProps) => {
+  // Get previous day's entry to pre-populate notes
+  const getPreviousDayNotes = () => {
+    if (entry?.notes) return entry.notes; // If current entry exists, use its notes
+    
+    // Find the most recent entry with notes
+    const sortedEntries = allEntries
+      .filter(e => e.notes && e.notes.trim())
+      .sort((a, b) => new Date(b.entry_date).getTime() - new Date(a.entry_date).getTime());
+    
+    return sortedEntries.length > 0 ? sortedEntries[0].notes : "";
+  };
+
   const [completed, setCompleted] = useState(entry?.completed ?? false);
-  const [notes, setNotes] = useState(entry?.notes ?? "");
+  const [notes, setNotes] = useState(getPreviousDayNotes());
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {

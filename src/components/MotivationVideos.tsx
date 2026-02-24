@@ -11,11 +11,12 @@ import { Play, Plus, Trash2, Edit } from "lucide-react";
 import { toast } from "sonner";
 
 const MotivationVideos = () => {
-  const { videos, loading, addVideo, deleteVideo, updateVideo } = useMotivationVideos();
+  const { videos, loading, addVideo, deleteVideo, updateVideo, checkForDuplicate } = useMotivationVideos();
   const { isAdmin } = useUserProfile();
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingVideo, setEditingVideo] = useState<any>(null);
+  const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
 
   const [newVideo, setNewVideo] = useState({
     title: "",
@@ -30,10 +31,31 @@ const MotivationVideos = () => {
       return;
     }
 
-    const result = await addVideo(newVideo);
-    if (result) {
-      setNewVideo({ title: "", video_url: "", description: "" });
-      setShowAddDialog(false);
+    setIsCheckingDuplicate(true);
+    
+    try {
+      // Check for duplicates before adding
+      const isDuplicate = await checkForDuplicate(newVideo.video_url);
+      
+      if (isDuplicate) {
+        // Show confirmation dialog for duplicate
+        const confirmAdd = window.confirm(
+          "⚠️ Warning: This video appears to already exist in the motivation videos list.\n\nDo you still want to add it?"
+        );
+        
+        if (!confirmAdd) {
+          setIsCheckingDuplicate(false);
+          return;
+        }
+      }
+      
+      const result = await addVideo(newVideo);
+      if (result) {
+        setNewVideo({ title: "", video_url: "", description: "" });
+        setShowAddDialog(false);
+      }
+    } finally {
+      setIsCheckingDuplicate(false);
     }
   };
 
@@ -44,13 +66,36 @@ const MotivationVideos = () => {
       return;
     }
 
-    const result = await updateVideo(editingVideo.id, {
-      title: editingVideo.title,
-      video_url: editingVideo.video_url,
-      description: editingVideo.description
-    });
-    if (result) {
-      setEditingVideo(null);
+    setIsCheckingDuplicate(true);
+    
+    try {
+      // Check for duplicates if URL was changed
+      const originalVideo = videos.find(v => v.id === editingVideo.id);
+      if (originalVideo && originalVideo.video_url !== editingVideo.video_url) {
+        const isDuplicate = await checkForDuplicate(editingVideo.video_url, editingVideo.id);
+        
+        if (isDuplicate) {
+          const confirmUpdate = window.confirm(
+            "⚠️ Warning: This video URL appears to already exist in the motivation videos list.\n\nDo you still want to update it?"
+          );
+          
+          if (!confirmUpdate) {
+            setIsCheckingDuplicate(false);
+            return;
+          }
+        }
+      }
+
+      const result = await updateVideo(editingVideo.id, {
+        title: editingVideo.title,
+        video_url: editingVideo.video_url,
+        description: editingVideo.description
+      });
+      if (result) {
+        setEditingVideo(null);
+      }
+    } finally {
+      setIsCheckingDuplicate(false);
     }
   };
 
@@ -115,10 +160,12 @@ const MotivationVideos = () => {
                   />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)}>
+                  <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)} disabled={isCheckingDuplicate}>
                     Cancel
                   </Button>
-                  <Button type="submit">Add Video</Button>
+                  <Button type="submit" disabled={isCheckingDuplicate}>
+                    {isCheckingDuplicate ? "Checking..." : "Add Video"}
+                  </Button>
                 </div>
               </form>
             </DialogContent>
