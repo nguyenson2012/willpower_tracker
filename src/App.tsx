@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import AdminVideos from "./pages/AdminVideos";
 import VideoDiscovery from "./pages/VideoDiscovery";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/videos" element={<ProtectedRoute><VideoDiscovery /></ProtectedRoute>} />
             <Route path="/admin/videos" element={<ProtectedRoute><AdminVideos /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/auth" element={<AuthRoute><Auth /></AuthRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
