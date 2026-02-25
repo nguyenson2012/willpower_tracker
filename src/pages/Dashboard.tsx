@@ -3,7 +3,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEntries } from "@/hooks/useEntries";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, LogOut, Crown, Settings } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ChevronLeft, ChevronRight, LogOut, Crown, Settings, UserCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CalendarGrid from "@/components/CalendarGrid";
 import DayModal from "@/components/DayModal";
@@ -21,7 +22,7 @@ import {
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
-  const { isAdmin } = useUserProfile();
+  const { isAdmin, profile } = useUserProfile();
   const navigate = useNavigate();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -101,7 +102,23 @@ const Dashboard = () => {
                 </div>
               </>
             )}
-            <span className="text-sm text-muted-foreground hidden sm:block">{user?.email}</span>
+            <button
+              onClick={() => navigate('/profile')}
+              className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer group"
+              title="Edit Profile"
+            >
+              <Avatar className="h-7 w-7 border border-border/50 group-hover:border-primary/50 transition-colors duration-200">
+                <AvatarImage src={profile?.avatar_url || undefined} alt="Profile" />
+                <AvatarFallback className="text-xs font-bold bg-gradient-to-br from-primary/80 to-primary text-primary-foreground">
+                  {profile?.username
+                    ? profile.username.slice(0, 2).toUpperCase()
+                    : user?.email?.slice(0, 2).toUpperCase() || "??"}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm text-muted-foreground hidden sm:block group-hover:text-foreground transition-colors duration-200">
+                {profile?.username || user?.email?.split("@")[0]}
+              </span>
+            </button>
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut className="h-4 w-4" />
             </Button>
